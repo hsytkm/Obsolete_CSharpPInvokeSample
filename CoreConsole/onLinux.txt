@@ -1,22 +1,26 @@
 ﻿Call C++ native library on Linux
 
-1. write c++ code
+1. write C++ code
 
 2. make shared library (*.so) on Linux
 	gcc -shared -fPIC -m64 -o foge.so foge.cpp
 	'cp' -f foge.so publish/
 
-3. copy self-contained package to linux
+3. build .NETCore self-contained package on windows
+	dotnet publish linux-x64
+
+4. copy self-contained package to linux
+	
+5. extract zip
 	unzip ~/publish.zip  -d .
 	cp foge.so publish/
 
-4. chmod execute binary
-	chmod +x publish/CoreConsole
-
-5. run
+6. run
+	chmod execute binary
 	./publish/CoreConsole
 
 
+C++ Sample
 ---------------------------------------------------------------------
 #include <iostream>
 

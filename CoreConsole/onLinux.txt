@@ -1,0 +1,39 @@
+﻿Call C++ native library on Linux
+
+1. write c++ code
+
+2. make shared library (*.so) on Linux
+	gcc -shared -fPIC -m64 -o foge.so foge.cpp
+	'cp' -f foge.so publish/
+
+3. copy self-contained package to linux
+	unzip ~/publish.zip  -d .
+	cp foge.so publish/
+
+4. chmod execute binary
+	chmod +x publish/CoreConsole
+
+5. run
+	./publish/CoreConsole
+
+
+---------------------------------------------------------------------
+#include <iostream>
+
+extern "C" {
+        int GetInt(){
+        return 4321;
+        }
+
+        // return string
+        bool GetString(char* data, int buflength) {
+                if (buflength < 1) return false;
+
+                for (int i = 0; i < buflength; i++) {
+                        data[i] = '0' + (i % 10);
+                }
+                return true;
+        }
+}
+---------------------------------------------------------------------
+EOF

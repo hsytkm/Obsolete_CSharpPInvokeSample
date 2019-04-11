@@ -1,17 +1,14 @@
-﻿#include "pch.h"
+// Linux Source code
+#if 0
 #include <iostream>
 
-#define DllExport __declspec( dllexport )
-
 extern "C" {
-
-	// return integer
-	DllExport int GetInt() {
-		return 1234;
+	int GetInt() {
+		return 4321;
 	}
 
 	// return string
-	DllExport bool GetString(char* data, int buflength) {
+	bool GetString(char* data, int buflength) {
 		if (buflength < 1) return false;
 
 		for (int i = 0; i < buflength; i++) {
@@ -20,3 +17,4 @@ extern "C" {
 		return true;
 	}
 }
+#endif

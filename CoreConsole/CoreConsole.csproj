@@ -9,10 +9,15 @@
     <ErrorReport>prompt</ErrorReport>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /Y $(SolutionDir)x64\$(ConfigurationName)\* $(SolutionDir)$(ProjectName)\$(OutDir)" />
+    <Exec Command="xcopy /Y /D $(SolutionDir)x64\$(ConfigurationName)\* $(ProjectDir)$(OutDir)" />
   </Target>
 
 </Project>

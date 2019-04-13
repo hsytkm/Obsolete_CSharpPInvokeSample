@@ -7,6 +7,11 @@
 #define DllExport __declspec(dllexport)
 #endif
 
+typedef struct Buffer {
+	const void* Data;
+	size_t Length;
+} Buffer;
+
 // return integer
 DllExport int GetIntFromLib() {
 	return 1234;
@@ -29,10 +34,15 @@ DllExport void ToUpperFromLib(const char* src, char* dest, int destLength) {
 	}
 }
 
-// byte[](In)
-DllExport int InByteArrayLib(unsigned char* data, int dataLength) {
-	if (dataLength != 4) return 0;
+// byte array use unsafe(In)
+DllExport int InByteArray1Lib(unsigned char* data, int dataLength) {
+	if (dataLength < 4) return 0;
 	return (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0];
+}
+
+// byte array don't use unsafe(In)
+DllExport int InByteArray2Lib(const Buffer *buffer) {
+	return InByteArray1Lib((unsigned char*)buffer->Data, buffer->Length);
 }
 
 // return string

@@ -11,6 +11,15 @@ namespace CoreConsole
 
         private static readonly Random Random = new Random();
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        class Buffer
+        {
+            public readonly IntPtr Data;
+            public readonly int Length;
+
+            public Buffer(IntPtr p, int l) { Data = p; Length = l; }
+        }
+
         #region int(In/Out)
 
         [DllImport(DllFilePath)]
@@ -64,24 +73,48 @@ namespace CoreConsole
 
         #endregion
 
-        #region byte*(In)
+        #region byte array use unsafe(In)
 
         [DllImport(DllFilePath)]
-        private extern unsafe static int InByteArrayLib(byte* data, int length);
+        private extern unsafe static int InByteArray1Lib(byte* data, int length);
 
-        private static void InByteArrayWrapper()
+        private static void InByteArrayUnsafeWrapper()
         {
             // ‭0x075BCD15‬ = ‭123456789‬DEC
-            var bs = new byte[4] { 0x15, 0xcd, 0x5b, 0x07 };
+            var bs = new byte[] { 0x15, 0xcd, 0x5b, 0x07 };
+            int source = BitConverter.ToInt32(bs);
             unsafe
             {
                 fixed (byte* ptr = bs)
                 {
-                    int source = BitConverter.ToInt32(bs);
-                    int ret = InByteArrayLib(ptr, bs.Length);
-                    Console.WriteLine($"InByteArrayWrapper\t: 0x{source:X8} = {ret} DEC");
+                    int ret = InByteArray1Lib(ptr, bs.Length);
+                    Console.WriteLine($"Byte[]Unsafe(In)\t: 0x{source:X8} = {ret} DEC");
                 }
             }
+        }
+
+        #endregion
+
+        #region byte array don't use unsafe(In)
+
+        [DllImport(DllFilePath)]
+        private extern static int InByteArray2Lib(Buffer buffer);
+
+        private static void InByteArrayIntPtrWrapper()
+        {
+            // ‭0x‭3ADE68B1‬ = ‭‭987654321‬‬DEC
+            var bs = new byte[] { 0xb1, 0x68, 0xde, 0x3a };
+            int source = BitConverter.ToInt32(bs);
+
+            IntPtr ptr = Marshal.AllocHGlobal(bs.Length);
+            try
+            {
+                Marshal.Copy(bs, 0, ptr, bs.Length);
+                var buffer = new Buffer(ptr, bs.Length);
+                int ret = InByteArray2Lib(buffer);
+                Console.WriteLine($"Byte[]IntPtr(In)\t: 0x{source:X8} = {ret} DEC");
+            }
+            finally { Marshal.FreeHGlobal(ptr); }
         }
 
         #endregion
@@ -125,8 +158,11 @@ namespace CoreConsole
             // string(In/Out)
             InOutStringWrapper();
 
-            // byte*(In)
-            InByteArrayWrapper();
+            // byte array use unsafe(In)
+            InByteArrayUnsafeWrapper();
+
+            // byte array don't use unsafe(In)
+            InByteArrayIntPtrWrapper();
 
             // Get string(byte*)
             GetStringWrapper();

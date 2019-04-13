@@ -6,12 +6,12 @@
 extern "C" {
 
 	// return integer
-	DllExport int GetInt() {
+	DllExport int GetIntFromLib() {
 		return 1234;
 	}
 
 	// return string
-	DllExport bool GetString(char* data, int buflength) {
+	DllExport bool GetStringFromLib(char* data, int buflength) {
 		if (buflength < 1) return false;
 
 		for (int i = 0; i < buflength; i++) {

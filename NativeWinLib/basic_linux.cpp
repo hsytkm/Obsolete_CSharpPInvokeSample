@@ -6,12 +6,12 @@
 #include <iostream>
 
 extern "C" {
-	int GetInt() {
+	int GetIntFromLib() {
 		return 4321;
 	}
 
 	// return string
-	bool GetString(char* data, int buflength) {
+	bool GetStringFromLib(char* data, int buflength) {
 		if (buflength < 1) return false;
 
 		for (int i = 0; i < buflength; i++) {

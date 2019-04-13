@@ -6,32 +6,23 @@ namespace CoreConsole
 {
     class BasicControls
     {
-#if true
-        // Windows
-        private const string DllFilePath = "NativeWinLib.dll";
-#else
-        // Linux
-        private const string DllFilePath = "NativeLinuxLib.so";
-#endif
-        [DllImport(DllFilePath)]
-        private extern static int GetInt();
+        private const string DllFilePath = "NativeWinLib.dll";  // Windows
+        //private const string DllFilePath = "NativeLinuxLib.so"; // Linux
+
+        #region GetIntFromLib()
 
         [DllImport(DllFilePath)]
-        private extern unsafe static bool GetString(byte* data, int length);
+        private extern static int GetIntFromLib();
 
-        public void Test()
+        #endregion
+
+        #region GetStringFromLib()
+
+        [DllImport(DllFilePath)]
+        private extern unsafe static bool GetStringFromLib(byte* data, int length);
+
+        private string GetString(int length = 11)
         {
-            Console.WriteLine("--- BasicControls ---");
-
-            /*
-             * Get integer form dll
-             */
-            Console.WriteLine($"GetInt: {GetInt()}");
-
-            /*
-             * Get string form dll
-             */
-            int length = 11;
             //length = 0;  // for error test
             string str;
             unsafe
@@ -39,14 +30,31 @@ namespace CoreConsole
                 var bs = new byte[length];
                 fixed (byte* ptr = bs)
                 {
-                    bool success = GetString(ptr, bs.Length);
+                    bool success = GetStringFromLib(ptr, bs.Length);
                     var ret = Encoding.UTF8.GetString(bs);
 
                     if (success) str = $"{success} {ret}";
                     else str = "Error"; // GetErrorMessage();
                 }
             }
-            Console.WriteLine($"GetString: {str}");
+            return str;
+        }
+
+        #endregion
+
+        public void Test()
+        {
+            Console.WriteLine("--- BasicControls ---");
+
+            /*
+             * Get integer form lib
+             */
+            Console.WriteLine($"GetInt: {GetIntFromLib()}");
+
+            /*
+             * Get string form lib
+             */
+            Console.WriteLine($"GetString: {GetString()}");
         }
 
     }

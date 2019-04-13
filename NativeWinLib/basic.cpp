@@ -21,8 +21,8 @@ extern "C" {
 	}
 
 	// return bool
-	DllExport bool GetBoolFromLib(int x) {
-		return (x & 1) ? true : false;
+	DllExport bool GetBoolFromLib(bool b1, bool b2) {
+		return b1 & b2;
 	}
 
 	

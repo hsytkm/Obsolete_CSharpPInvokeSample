@@ -9,6 +9,8 @@ namespace CoreConsole
         private const string DllFilePath = "NativeWinLib.dll";  // Windows
         //private const string DllFilePath = "NativeLinuxLib.so"; // Linux
 
+        private static readonly Random Random = new Random();
+
         #region GetIntFromLib()
 
         [DllImport(DllFilePath)]
@@ -21,9 +23,9 @@ namespace CoreConsole
         [DllImport(DllFilePath)]
         private extern unsafe static bool GetStringFromLib(byte* data, int length);
 
-        private void GetStringWrapper()
+        private static void GetStringWrapper()
         {
-            int length = new Random().Next(0, 17);
+            int length = Random.Next(0, 17);
             string str;
             unsafe
             {
@@ -46,13 +48,17 @@ namespace CoreConsole
 
         [DllImport(DllFilePath)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        private extern static bool GetBoolFromLib(int x);
+        private extern static bool GetBoolFromLib(
+            [MarshalAs(UnmanagedType.Bool)]bool b1,
+            [MarshalAs(UnmanagedType.Bool)]bool b2);
 
-        private void GetBoolWrapper()
+        private static void GetBoolWrapper()
         {
-            var val = new Random().Next(0, 10);
-            var ret = GetBoolFromLib(val) ? "odd" : "even";
-            Console.WriteLine($"GetBoolFromLib\t\t: {val} is {ret}");
+            // logical conjunction(論理積)
+            var b1 = ((Random.Next() & 1) == 1) ? true : false;
+            var b2 = ((Random.Next() & 1) == 1) ? true : false;
+            var ret = GetBoolFromLib(b1, b2);
+            Console.WriteLine($"GetBoolFromLib\t\t: {b1} AND {b2} -> {ret}");
         }
 
         #endregion

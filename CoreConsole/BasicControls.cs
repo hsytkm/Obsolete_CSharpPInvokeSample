@@ -6,19 +6,65 @@ namespace CoreConsole
 {
     class BasicControls
     {
-        private const string DllFilePath = "NativeWinLib.dll";  // Windows
-        //private const string DllFilePath = "NativeLinuxLib.so"; // Linux
+        private const string DllFilePath = "NativeWinLib.dll";      // Windows
+        //private const string DllFilePath = "NativeLinuxLib.so";   // Linux
 
         private static readonly Random Random = new Random();
 
-        #region GetIntFromLib()
+        #region int(In/Out)
 
         [DllImport(DllFilePath)]
-        private extern static int GetIntFromLib();
+        private extern static int AddIntegerFromLib(int x, int y);
+
+        private static void GetSetIntWrapper()
+        {
+            var x = Random.Next(0, 10);
+            var y = Random.Next(0, 10);
+            var ret = AddIntegerFromLib(x, y);
+            Console.WriteLine($"int(In/Out)\t\t: {x} + {y} = {ret}");
+        }
 
         #endregion
 
-        #region GetStringFromLib()
+        #region bool(In/Out)
+
+        [DllImport(DllFilePath)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private extern static bool GetLogicalConjunctionFromLib(
+            [MarshalAs(UnmanagedType.Bool)]bool b1,
+            [MarshalAs(UnmanagedType.Bool)]bool b2);
+
+        private static void GetSetBoolWrapper()
+        {
+            // logical conjunction(論理積)
+            var b1 = ((Random.Next() & 1) == 1) ? true : false;
+            var b2 = ((Random.Next() & 1) == 1) ? true : false;
+            var ret = GetLogicalConjunctionFromLib(b1, b2);
+            Console.WriteLine($"bool(In/Out)\t\t: {b1} AND {b2} -> {ret}");
+        }
+
+        #endregion
+
+        #region string(In/Out)
+
+        [DllImport(DllFilePath, CharSet = CharSet.Unicode)]
+        private extern unsafe static void ToUpperFromLib(
+            [MarshalAs(UnmanagedType.LPUTF8Str), In] string inText,
+            [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder outText,
+            int outLength);
+
+        private static void ToUpperWrapper()
+        {
+            var source = "aBcDEFghI";
+            var buff = new StringBuilder(source.Length);
+            ToUpperFromLib(source, buff, buff.Capacity);
+
+            Console.WriteLine($"ToUpperWrapper\t\t: {source} -> {buff.ToString()}");
+        }
+
+        #endregion
+
+        #region string(byte*)
 
         [DllImport(DllFilePath)]
         private extern unsafe static bool GetStringFromLib(byte* data, int length);
@@ -44,38 +90,23 @@ namespace CoreConsole
 
         #endregion
 
-        #region GetBoolFromLib()
-
-        [DllImport(DllFilePath)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private extern static bool GetBoolFromLib(
-            [MarshalAs(UnmanagedType.Bool)]bool b1,
-            [MarshalAs(UnmanagedType.Bool)]bool b2);
-
-        private static void GetBoolWrapper()
-        {
-            // logical conjunction(論理積)
-            var b1 = ((Random.Next() & 1) == 1) ? true : false;
-            var b2 = ((Random.Next() & 1) == 1) ? true : false;
-            var ret = GetBoolFromLib(b1, b2);
-            Console.WriteLine($"GetBoolFromLib\t\t: {b1} AND {b2} -> {ret}");
-        }
-
-        #endregion
-
-
         public void Test()
         {
             Console.WriteLine("--- BasicControls ---");
 
-            // Get integer form lib
-            Console.WriteLine($"GetIntFromLib\t\t: {GetIntFromLib()}");
+            // Get/Set integer
+            GetSetIntWrapper();
 
-            // Get string form lib
+            // Get/Set bool
+            GetSetBoolWrapper();
+
+            // Get StringBuilder / Set string
+            ToUpperWrapper();
+
+            // Get string(byte*)
             GetStringWrapper();
 
-            // Get bool form lib
-            GetBoolWrapper();
+
         }
 
     }

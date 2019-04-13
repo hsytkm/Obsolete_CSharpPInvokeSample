@@ -59,7 +59,7 @@ namespace CoreConsole
             var buff = new StringBuilder(source.Length);
             ToUpperFromLib(source, buff, buff.Capacity);
 
-            Console.WriteLine($"ToUpperWrapper\t\t: {source} -> {buff.ToString()}");
+            Console.WriteLine($"string(In/Out)\t\t: {source} -> {buff.ToString()}");
         }
 
         #endregion

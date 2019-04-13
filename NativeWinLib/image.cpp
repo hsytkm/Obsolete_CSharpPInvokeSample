@@ -22,28 +22,19 @@ struct ImagePayload {
 
 // return Image All Average Y
 DllExport double GetImageAllY(const ImagePayload *payload) {
+	//unsigned char *data = payload->data;
+
 	uint64_t sb = 0, sg = 0, sr = 0;
-
-	int width = payload->width;
-	int height = payload->height;
-	int bytesPerPixel = payload->bytesPerPixel;
-	int stride = payload->stride;
-	unsigned char *data = payload->data;
-
-	for (int y = 0; y < height * stride; y += stride)
+	for (int y = 0; y < payload->height * payload->stride; y += payload->stride)
 	{
-		for (int x = 0; x < width * bytesPerPixel; x += bytesPerPixel)
+		for (int i = y; i < y + (payload->width * payload->bytesPerPixel); i += payload->bytesPerPixel)
 		{
-			int i = y + x;
-			sb += data[i];
-			sg += data[i + 1];
-			sr += data[i + 2];
+			sb += payload->data[i];
+			sg += payload->data[i + 1];
+			sr += payload->data[i + 2];
 		}
 	}
 
-	double count = (double)width * height;
-	double ab = sb / count;
-	double ag = sg / count;
-	double ar = sr / count;
-	return GetY(ar, ag, ab);
+	double count = (double)payload->width * payload->height;
+	return GetY(sr / count, sg / count, sb / count);
 }

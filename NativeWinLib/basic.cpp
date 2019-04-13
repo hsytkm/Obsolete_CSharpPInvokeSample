@@ -19,4 +19,11 @@ extern "C" {
 		}
 		return true;
 	}
+
+	// return bool
+	DllExport bool GetBoolFromLib(int x) {
+		return (x & 1) ? true : false;
+	}
+
+	
 }

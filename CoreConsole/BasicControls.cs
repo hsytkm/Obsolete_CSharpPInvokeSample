@@ -21,9 +21,9 @@ namespace CoreConsole
         [DllImport(DllFilePath)]
         private extern unsafe static bool GetStringFromLib(byte* data, int length);
 
-        private string GetString(int length = 11)
+        private void GetStringWrapper()
         {
-            //length = 0;  // for error test
+            int length = new Random().Next(0, 17);
             string str;
             unsafe
             {
@@ -33,28 +33,43 @@ namespace CoreConsole
                     bool success = GetStringFromLib(ptr, bs.Length);
                     var ret = Encoding.UTF8.GetString(bs);
 
-                    if (success) str = $"{success} {ret}";
-                    else str = "Error"; // GetErrorMessage();
+                    if (success) str = $"{ret}";
+                    else str = "**Error**"; // GetErrorMessage();
                 }
             }
-            return str;
+            Console.WriteLine($"GetStringFromLib\t: Len={length}, Str={str}");
         }
 
         #endregion
+
+        #region GetBoolFromLib()
+
+        [DllImport(DllFilePath)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private extern static bool GetBoolFromLib(int x);
+
+        private void GetBoolWrapper()
+        {
+            var val = new Random().Next(0, 10);
+            var ret = GetBoolFromLib(val) ? "odd" : "even";
+            Console.WriteLine($"GetBoolFromLib\t\t: {val} is {ret}");
+        }
+
+        #endregion
+
 
         public void Test()
         {
             Console.WriteLine("--- BasicControls ---");
 
-            /*
-             * Get integer form lib
-             */
-            Console.WriteLine($"GetInt: {GetIntFromLib()}");
+            // Get integer form lib
+            Console.WriteLine($"GetIntFromLib\t\t: {GetIntFromLib()}");
 
-            /*
-             * Get string form lib
-             */
-            Console.WriteLine($"GetString: {GetString()}");
+            // Get string form lib
+            GetStringWrapper();
+
+            // Get bool form lib
+            GetBoolWrapper();
         }
 
     }

@@ -39,7 +39,7 @@ extern "C" {
 			}
 		}
 
-		double count = (double)(width * height);
+		double count = (double)width * height;
 		double ab = sb / count;
 		double ag = sg / count;
 		double ar = sr / count;

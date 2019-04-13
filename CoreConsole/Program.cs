@@ -14,8 +14,7 @@ namespace CoreConsole
             // バイナリデータの受け渡し
             new BinaryPayload().Test();
 
-            Console.WriteLine("WaitKey");
-            Console.ReadKey();
+            //Console.WriteLine("WaitKey"); Console.ReadKey();
         }
     }
 }

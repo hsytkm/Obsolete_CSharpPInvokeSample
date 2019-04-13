@@ -16,7 +16,7 @@ namespace CoreConsole
         [DllImport(DllFilePath)]
         private extern static int AddIntegerFromLib(int x, int y);
 
-        private static void GetSetIntWrapper()
+        private static void InOutIntWrapper()
         {
             var x = Random.Next(0, 10);
             var y = Random.Next(0, 10);
@@ -34,7 +34,7 @@ namespace CoreConsole
             [MarshalAs(UnmanagedType.Bool)]bool b1,
             [MarshalAs(UnmanagedType.Bool)]bool b2);
 
-        private static void GetSetBoolWrapper()
+        private static void InOutBoolWrapper()
         {
             // logical conjunction(論理積)
             var b1 = ((Random.Next() & 1) == 1) ? true : false;
@@ -53,13 +53,35 @@ namespace CoreConsole
             [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder outText,
             int outLength);
 
-        private static void ToUpperWrapper()
+        private static void InOutStringWrapper()
         {
-            var source = "aBcDEFghI";
+            var source = "aBcDeFghI";
             var buff = new StringBuilder(source.Length);
             ToUpperFromLib(source, buff, buff.Capacity);
 
             Console.WriteLine($"string(In/Out)\t\t: {source} -> {buff.ToString()}");
+        }
+
+        #endregion
+
+        #region byte*(In)
+
+        [DllImport(DllFilePath)]
+        private extern unsafe static int InByteArrayLib(byte* data, int length);
+
+        private static void InByteArrayWrapper()
+        {
+            // ‭0x075BCD15‬ = ‭123456789‬DEC
+            var bs = new byte[4] { 0x15, 0xcd, 0x5b, 0x07 };
+            unsafe
+            {
+                fixed (byte* ptr = bs)
+                {
+                    int source = BitConverter.ToInt32(bs);
+                    int ret = InByteArrayLib(ptr, bs.Length);
+                    Console.WriteLine($"InByteArrayWrapper\t: 0x{source:X8} = {ret} DEC");
+                }
+            }
         }
 
         #endregion
@@ -94,14 +116,17 @@ namespace CoreConsole
         {
             Console.WriteLine("--- BasicControls ---");
 
-            // Get/Set integer
-            GetSetIntWrapper();
+            // int(In/Out)
+            InOutIntWrapper();
 
-            // Get/Set bool
-            GetSetBoolWrapper();
+            // bool(In/Out)
+            InOutBoolWrapper();
 
-            // Get StringBuilder / Set string
-            ToUpperWrapper();
+            // string(In/Out)
+            InOutStringWrapper();
+
+            // byte*(In)
+            InByteArrayWrapper();
 
             // Get string(byte*)
             GetStringWrapper();

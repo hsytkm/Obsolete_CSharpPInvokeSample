@@ -13,12 +13,15 @@ namespace CoreConsole
 
         #region int(In/Out)
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, EntryPoint = "GetIntFromLib", CallingConvention = CallingConvention.Cdecl)]
+        private extern static int Get1234();
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern static int AddIntegerFromLib(int x, ref int y);
 
         private static void InOutIntWrapper()
         {
-            var x = Random.Next(0, 10);
+            var x = Get1234();
             var y = Random.Next(0, 10);
             var ret = AddIntegerFromLib(x, ref y);
             Console.WriteLine($"int(In/Out)\t\t: {x} + {y} = {ret}");
@@ -28,7 +31,7 @@ namespace CoreConsole
 
         #region bool(In/Out)
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private extern static bool GetLogicalConjunctionFromLib(
             [MarshalAs(UnmanagedType.Bool)]bool b1,
@@ -47,7 +50,7 @@ namespace CoreConsole
 
         #region string(In/Out)
 
-        [DllImport(DllFilePath, CharSet = CharSet.Unicode)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         private extern unsafe static void ToUpperFromLib(
             [MarshalAs(UnmanagedType.LPUTF8Str), In] string inText,
             [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder outText,
@@ -66,7 +69,7 @@ namespace CoreConsole
 
         #region byte array use unsafe(In)
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern unsafe static int InByteArray1Lib(byte* data, int length);
 
         private static void InByteArrayUnsafeWrapper()
@@ -97,7 +100,7 @@ namespace CoreConsole
             public Buffer(IntPtr p, int l) { Data = p; Length = l; }
         }
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern static int InByteArray2Lib(ref Buffer buffer);
 
         private static void InByteArrayIntPtrWrapper()
@@ -131,10 +134,10 @@ namespace CoreConsole
             public readonly double Height;
         }
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern static MyRect GetStructFromLib();
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern static ref MyRect GetStructPtrFromLib();
 
         private static void OutStructWrapper()
@@ -150,7 +153,7 @@ namespace CoreConsole
 
         #region string(byte*)
 
-        [DllImport(DllFilePath)]
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private extern unsafe static bool GetStringFromLib(byte* data, int length);
 
         private static void GetStringWrapper()

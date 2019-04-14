@@ -14,6 +14,8 @@
 #endif
 #endif
 
+#pragma region Struct
+
 struct Buffer {
 	const void* Data;
 	size_t Length;
@@ -25,6 +27,45 @@ struct MyRect {
 	double Width;
 	double Height;
 };
+#pragma endregion
+
+#pragma region SetStringToCharArray()
+
+bool SetStringToCharArray(char* dest, int destLength, const char* src, int srcLength) {
+	if (destLength < 1) return true;
+
+	bool err;
+	int copyLength, nullIndex;
+
+	if (destLength + 1 >= srcLength) {
+		// 全部収まるパターン
+		err = false;
+		copyLength = srcLength;
+		nullIndex = srcLength;
+	}
+	else {
+		// 全部収まらないパターン
+		err = true;
+		copyLength = destLength - 1;
+		nullIndex = destLength - 1;
+	}
+
+	for (int i = 0; i < copyLength; i++) {
+		dest[i] = src[i];
+	}
+	dest[nullIndex] = '\0';
+	return err;
+}
+
+bool SetStringToCharArray(char* dest, int destLength, const char* src) {
+	return SetStringToCharArray(dest, destLength, src, (int)strlen(src));
+}
+
+bool SetStringToCharArray(char* dest, int destLength, std::string str) {
+	return SetStringToCharArray(dest, destLength, str.c_str(), (int)str.size());
+}
+
+#pragma endregion
 
 // return integer
 DllExport int GetIntFromLib() {
@@ -42,27 +83,20 @@ DllExport bool GetLogicalConjunctionFromLib(bool b1, bool b2) {
 }
 
 // string(In/Out) 大文字化
-DllExport void ToUpperFromLib(const char* src, char* dest, int destLength) {
-	int len = (int)strlen(src) < destLength ? (int)strlen(src) : destLength;
-	for (int i = 0; i <= len; i++) {
-		dest[i] = toupper(src[i]);
+DllExport bool ToUpperFromLib(const char* src, char* dest, int destLength) {
+	bool ret = SetStringToCharArray(dest, destLength, src);
+	char* p = dest;
+	while (*p != '\0')
+	{
+		*p = toupper(*p);
+		p++;
 	}
+	return ret;
 }
 
-bool SetStringToCharArray(std::string str, char* pArray, int arrayLength) {
-	int strLength = (int)str.size() + 1;	// null文字分で+1してみる
-	int minLength = (arrayLength < strLength) ? arrayLength : strLength;
-	bool err = (arrayLength < strLength) ? false : true;
-
-	const char* strPtr = str.c_str();
-	for (int i = 0; i < minLength; i++) {
-		pArray[i] = strPtr[i];
-	}
-	return err;
-}
-
+// string(Out) 予約文字列
 DllExport bool GetMessageFromLib(char* dest, int destLength) {
-	return SetStringToCharArray("Hello, I'm Library!", dest, destLength);
+	return SetStringToCharArray(dest, destLength, "Hello, I'm Library!");
 }
 
 // byte array use unsafe(In)

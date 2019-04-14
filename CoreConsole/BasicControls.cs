@@ -51,16 +51,17 @@ namespace CoreConsole
         #region string(In/Out)
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        private extern unsafe static void ToUpperFromLib(
+        private extern unsafe static bool ToUpperFromLib(
             [MarshalAs(UnmanagedType.LPUTF8Str), In] string inText,
             [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder outText,
             int outLength);
 
         private static void InOutStringWrapper()
         {
-            var source = "aBcDeFghI";
+            var source = "aBc";
             var buff = new StringBuilder(source.Length);
-            ToUpperFromLib(source, buff, buff.Capacity);
+            if (ToUpperFromLib(source, buff, buff.Capacity))
+                throw new ExternalException($"String Buffer is short. ({buff.ToString()})");
 
             Console.WriteLine($"string(In/Out)\t\t: {source} -> {buff.ToString()}");
         }
@@ -77,7 +78,7 @@ namespace CoreConsole
         private static void GetMessaeWrapper()
         {
             var buff = new StringBuilder(256);
-            if (!GetMessageFromLib(buff, buff.Capacity))
+            if (GetMessageFromLib(buff, buff.Capacity))
                 throw new ExternalException($"String Buffer is short. ({buff.ToString()})");
             Console.WriteLine($"string(Out)\t\t: {buff.ToString()}");
         }

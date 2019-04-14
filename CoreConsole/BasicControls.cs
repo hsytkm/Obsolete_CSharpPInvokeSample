@@ -122,6 +122,7 @@ namespace CoreConsole
         #region struct(Out)
 
         // Lib内で値を設定するので、初期値なし警告(CS0649)が出るがshoganai
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
         struct MyRect
         {
             public readonly double X;

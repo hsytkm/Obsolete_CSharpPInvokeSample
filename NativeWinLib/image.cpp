@@ -1,10 +1,16 @@
 #include "pch.h"
 #include <iostream>
 
+#define ON_LINUX	0
+
+#if ON_LINUX
+#define DllExport extern "C" 
+#else
 #ifdef __cplusplus
 #define DllExport extern "C" __declspec(dllexport)
 #else
 #define DllExport __declspec(dllexport)
+#endif
 #endif
 
 double GetY(double R, double G, double B)

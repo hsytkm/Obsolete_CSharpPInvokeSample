@@ -67,6 +67,23 @@ namespace CoreConsole
 
         #endregion
 
+        #region string(Out)
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        private extern unsafe static bool GetMessageFromLib(
+            [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder str,
+            int length);
+
+        private static void GetMessaeWrapper()
+        {
+            var buff = new StringBuilder(256);
+            if (!GetMessageFromLib(buff, buff.Capacity))
+                throw new ExternalException($"String Buffer is short. ({buff.ToString()})");
+            Console.WriteLine($"string(Out)\t\t: {buff.ToString()}");
+        }
+
+        #endregion
+
         #region byte array use unsafe(In)
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
@@ -189,6 +206,9 @@ namespace CoreConsole
 
             // string(In/Out)
             InOutStringWrapper();
+
+            // string(Out)
+            GetMessaeWrapper();
 
             // byte array use unsafe(In)
             InByteArrayUnsafeWrapper();

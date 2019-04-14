@@ -49,6 +49,22 @@ DllExport void ToUpperFromLib(const char* src, char* dest, int destLength) {
 	}
 }
 
+bool SetStringToCharArray(std::string str, char* pArray, int arrayLength) {
+	int strLength = (int)str.size() + 1;	// null文字分で+1してみる
+	int minLength = (arrayLength < strLength) ? arrayLength : strLength;
+	bool err = (arrayLength < strLength) ? false : true;
+
+	const char* strPtr = str.c_str();
+	for (int i = 0; i < minLength; i++) {
+		pArray[i] = strPtr[i];
+	}
+	return err;
+}
+
+DllExport bool GetMessageFromLib(char* dest, int destLength) {
+	return SetStringToCharArray("Hello, I'm Library!", dest, destLength);
+}
+
 // byte array use unsafe(In)
 DllExport int InByteArray1Lib(unsigned char* data, int dataLength) {
 	if (dataLength < 4) return 0;

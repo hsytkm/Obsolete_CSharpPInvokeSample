@@ -11,25 +11,16 @@ namespace CoreConsole
 
         private static readonly Random Random = new Random();
 
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        class Buffer
-        {
-            public readonly IntPtr Data;
-            public readonly int Length;
-
-            public Buffer(IntPtr p, int l) { Data = p; Length = l; }
-        }
-
         #region int(In/Out)
 
         [DllImport(DllFilePath)]
-        private extern static int AddIntegerFromLib(int x, int y);
+        private extern static int AddIntegerFromLib(int x, ref int y);
 
         private static void InOutIntWrapper()
         {
             var x = Random.Next(0, 10);
             var y = Random.Next(0, 10);
-            var ret = AddIntegerFromLib(x, y);
+            var ret = AddIntegerFromLib(x, ref y);
             Console.WriteLine($"int(In/Out)\t\t: {x} + {y} = {ret}");
         }
 
@@ -97,8 +88,17 @@ namespace CoreConsole
 
         #region byte array don't use unsafe(In)
 
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        struct Buffer
+        {
+            public readonly IntPtr Data;
+            public readonly int Length;
+
+            public Buffer(IntPtr p, int l) { Data = p; Length = l; }
+        }
+
         [DllImport(DllFilePath)]
-        private extern static int InByteArray2Lib(Buffer buffer);
+        private extern static int InByteArray2Lib(ref Buffer buffer);
 
         private static void InByteArrayIntPtrWrapper()
         {
@@ -111,10 +111,38 @@ namespace CoreConsole
             {
                 Marshal.Copy(bs, 0, ptr, bs.Length);
                 var buffer = new Buffer(ptr, bs.Length);
-                int ret = InByteArray2Lib(buffer);
+                int ret = InByteArray2Lib(ref buffer);
                 Console.WriteLine($"Byte[]IntPtr(In)\t: 0x{source:X8} = {ret} DEC");
             }
             finally { Marshal.FreeHGlobal(ptr); }
+        }
+
+        #endregion
+
+        #region struct(Out)
+
+        // Lib内で値を設定するので、初期値なし警告(CS0649)が出るがshoganai
+        struct MyRect
+        {
+            public readonly double X;
+            public readonly double Y;
+            public readonly double Width;
+            public readonly double Height;
+        }
+
+        [DllImport(DllFilePath)]
+        private extern static MyRect GetStructFromLib();
+
+        [DllImport(DllFilePath)]
+        private extern static ref MyRect GetStructPtrFromLib();
+
+        private static void OutStructWrapper()
+        {
+            var rect1 = GetStructFromLib();
+            Console.WriteLine($"struct(Out)\t\t: X={rect1.X}, Y={rect1.Y}, Width={rect1.Width}, Height={rect1.Height}");
+
+            var rect2 = GetStructPtrFromLib();
+            Console.WriteLine($"struct(Out)\t\t: X={rect2.X}, Y={rect2.Y}, Width={rect2.Width}, Height={rect2.Height}");
         }
 
         #endregion
@@ -163,6 +191,9 @@ namespace CoreConsole
 
             // byte array don't use unsafe(In)
             InByteArrayIntPtrWrapper();
+
+            // struct(Out)
+            OutStructWrapper();
 
             // Get string(byte*)
             GetStringWrapper();

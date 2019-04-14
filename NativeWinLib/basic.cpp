@@ -7,10 +7,17 @@
 #define DllExport __declspec(dllexport)
 #endif
 
-typedef struct Buffer {
+struct Buffer {
 	const void* Data;
 	size_t Length;
-} Buffer;
+};
+
+struct MyRect {
+	double X;
+	double Y;
+	double Width;
+	double Height;
+};
 
 // return integer
 DllExport int GetIntFromLib() {
@@ -18,8 +25,8 @@ DllExport int GetIntFromLib() {
 }
 
 // Integer(In/Out) 加算
-DllExport int AddIntegerFromLib(int x, int y) {
-	return x + y;
+DllExport int AddIntegerFromLib(int x, const int* y) {
+	return x + *y;
 }
 	
 // bool(In/Out) 論理積
@@ -29,7 +36,8 @@ DllExport bool GetLogicalConjunctionFromLib(bool b1, bool b2) {
 
 // string(In/Out) 大文字化
 DllExport void ToUpperFromLib(const char* src, char* dest, int destLength) {
-	for (int i = 0; i <= strlen(src); i++) {
+	int len = strlen(src) < destLength ? strlen(src) : destLength;
+	for (int i = 0; i <= len; i++) {
 		dest[i] = toupper(src[i]);
 	}
 }
@@ -42,7 +50,21 @@ DllExport int InByteArray1Lib(unsigned char* data, int dataLength) {
 
 // byte array don't use unsafe(In)
 DllExport int InByteArray2Lib(const Buffer *buffer) {
-	return InByteArray1Lib((unsigned char*)buffer->Data, buffer->Length);
+	return InByteArray1Lib((unsigned char*)buffer->Data, static_cast<int>(buffer->Length));
+}
+
+DllExport MyRect GetStructFromLib() {
+	MyRect rect;
+	rect.X = 1.2;
+	rect.Y = 3.4;
+	rect.Width = 5.6;
+	rect.Height = 7.8;
+	return rect;
+}
+
+MyRect myRect = { 9.8, 7.6, 5.4, 3.21 };
+DllExport MyRect& GetStructPtrFromLib() {
+	return myRect;
 }
 
 // return string

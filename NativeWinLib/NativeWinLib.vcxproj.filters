@@ -22,9 +22,6 @@
     <ClCompile Include="basic.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="basic_linux.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="image.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>

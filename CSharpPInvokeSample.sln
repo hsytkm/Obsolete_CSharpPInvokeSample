@@ -44,7 +44,6 @@ Global
 		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Debug|x86.Build.0 = Debug|Win32
 		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Release|Any CPU.ActiveCfg = Release|Win32
 		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Release|x64.ActiveCfg = Release|x64
-		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Release|x64.Build.0 = Release|x64
 		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Release|x86.ActiveCfg = Release|Win32
 		{D4CDAAC2-1B99-4E63-9517-FCDCC8E9D96C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

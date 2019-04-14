@@ -1,10 +1,16 @@
 ﻿#include "pch.h"
 #include <iostream>
 
+#define ON_LINUX	0
+
+#if ON_LINUX
+#define DllExport extern "C" 
+#else
 #ifdef __cplusplus
 #define DllExport extern "C" __declspec(dllexport)
 #else
 #define DllExport __declspec(dllexport)
+#endif
 #endif
 
 struct Buffer {
@@ -36,7 +42,7 @@ DllExport bool GetLogicalConjunctionFromLib(bool b1, bool b2) {
 
 // string(In/Out) 大文字化
 DllExport void ToUpperFromLib(const char* src, char* dest, int destLength) {
-	int len = strlen(src) < destLength ? strlen(src) : destLength;
+	int len = (int)strlen(src) < destLength ? (int)strlen(src) : destLength;
 	for (int i = 0; i <= len; i++) {
 		dest[i] = toupper(src[i]);
 	}

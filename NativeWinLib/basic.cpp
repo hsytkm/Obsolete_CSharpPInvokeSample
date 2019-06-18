@@ -133,3 +133,8 @@ DllExport bool GetStringFromLib(char* dst, int dstlength) {
 	}
 	return true;
 }
+
+// return string
+DllExport const char* GetConstStringFromLib() {
+	return "This is const char*";
+}

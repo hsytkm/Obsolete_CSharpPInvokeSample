@@ -51,6 +51,7 @@ namespace CoreConsole
         #region string(In/Out)
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private extern unsafe static bool ToUpperFromLib(
             [MarshalAs(UnmanagedType.LPUTF8Str), In] string inText,
             [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder outText,
@@ -71,6 +72,7 @@ namespace CoreConsole
         #region string(Out)
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private extern unsafe static bool GetMessageFromLib(
             [MarshalAs(UnmanagedType.LPUTF8Str), Out] StringBuilder str,
             int length);
@@ -172,6 +174,7 @@ namespace CoreConsole
         #region string(byte*)
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private extern unsafe static bool GetStringFromLib(byte* data, int length);
 
         private static void GetStringWrapper()
@@ -191,6 +194,19 @@ namespace CoreConsole
                 }
             }
             Console.WriteLine($"GetStringFromLib\t: Len={length}, Str={str}");
+        }
+
+        #endregion
+
+        #region string(const char*)
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private extern unsafe static char* GetConstStringFromLib();
+
+        private unsafe void GetConstStringWrapper()
+        {
+            var str = Marshal.PtrToStringAnsi((IntPtr)GetConstStringFromLib());
+            Console.WriteLine($"GetConstStringWrapper\t: {str}");
         }
 
         #endregion
@@ -223,6 +239,8 @@ namespace CoreConsole
             // Get string(byte*)
             GetStringWrapper();
 
+            // Get string(byte*)
+            GetConstStringWrapper();
 
         }
 

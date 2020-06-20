@@ -1,3 +1,7 @@
+## Move to
+
+[hsytkm/PInvokeFromCSharp] (https://github.com/hsytkm/PInvokeFromCSharp)
+
 ## テク
 
 DllImport に SuppressUnmanagedCodeSecurity を付与すると、セキュリティチェックが初めの１回しか行われなくなり高速化されるらしい。
